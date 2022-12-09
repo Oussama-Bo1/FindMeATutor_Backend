@@ -1,11 +1,11 @@
 package main
 
 import (
-	"FindMeATutor_Backend/API"
+	"FindMeATutor_User_Service/API"
 	"context"
 	"log"
 
-	"FindMeATutor_Backend/MongoDB"
+	"FindMeATutor_User_Service/MongoDB"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
