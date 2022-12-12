@@ -1,9 +1,16 @@
 package main
 
 import (
-	"FindMeATutor_Backend/MongoDB"
+	"FindMeATutor_User_Service/API"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	MongoDB.PrintAllDatabases()
+	server := gin.Default()
+	basePath := server.Group("/v1")
+	API.RegisterUserRoutes(basePath)
+	err := server.Run()
+	if err != nil {
+		return
+	}
 }
