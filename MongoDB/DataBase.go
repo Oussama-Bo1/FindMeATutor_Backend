@@ -68,7 +68,14 @@ func CreateUser(user *User) error {
 
 	database := client.Database(databaseName)
 	collection := database.Collection(databaseCollection)
-	_, err := collection.InsertOne(ctx, user)
+	count, err := collection.CountDocuments(ctx, bson.D{bson.E{Key: "email", Value: user.Email}})
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		_, err := collection.InsertOne(ctx, user)
+		return err
+	}
 	return err
 }
 
