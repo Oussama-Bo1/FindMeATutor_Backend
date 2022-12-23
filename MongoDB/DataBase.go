@@ -3,9 +3,11 @@ package MongoDB
 import (
 	"context"
 	"errors"
+	"github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"os"
 	"time"
@@ -68,6 +70,11 @@ func CreateUser(user *User) error {
 
 	database := client.Database(databaseName)
 	collection := database.Collection(databaseCollection)
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+	if err != nil {
+		return err
+	}
+	user.Password = string(hash)
 	count, err := collection.CountDocuments(ctx, bson.D{bson.E{Key: "email", Value: user.Email}})
 	if err != nil {
 		return err
@@ -121,4 +128,32 @@ func DeleteUser(email *string) error {
 		return errors.New("no matched user found for deletion")
 	}
 	return nil
+}
+
+func LoginUser(email *string, password string) (error, string) {
+	var user User
+	client, ctx := ConnectToDatabase()
+	var databaseName = os.Getenv("DATABASE_NAME")
+	var databaseCollection = os.Getenv("DATABASE_COLLECTION")
+
+	database := client.Database(databaseName)
+	collection := database.Collection(databaseCollection)
+	query := bson.D{bson.E{Key: "email", Value: email}}
+	err := collection.FindOne(ctx, query).Decode(&user)
+	if err != nil {
+		return err, ""
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return err, ""
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"email": user.Email,
+		"exp":   time.Now().Add(time.Hour * 24).Unix(),
+	})
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
+	if err != nil {
+		return err, ""
+	}
+	return nil, tokenString
 }

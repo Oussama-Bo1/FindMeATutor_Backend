@@ -5,7 +5,6 @@ import (
 )
 
 type User struct {
-	ID                   primitive.ObjectID `json:"_id" bson:"_id"`
 	AboutMe              string             `json:"aboutMe" bson:"aboutMe"`
 	Address              Address            `json:"address" bson:"address"`
 	BirthDate            primitive.DateTime `json:"birthDate" bson:"birthDate"`
@@ -37,7 +36,6 @@ type Address struct {
 }
 
 type Review struct {
-	ID         primitive.ObjectID `json:"_id" bson:"_id"`
 	Date       primitive.DateTime `json:"date" bson:"date"`
 	Rating     int                `json:"rating" bson:"rating"`
 	Review     string             `json:"review" bson:"review"`

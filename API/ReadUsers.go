@@ -1,6 +1,7 @@
 package API
 
 import (
+	"FindMeATutor_User_Service/API/Middleware"
 	"FindMeATutor_User_Service/MongoDB"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -63,10 +64,30 @@ func DeleteUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted"})
 }
 
+func Login(ctx *gin.Context) {
+	email := ctx.Param("email")
+	password := ctx.Param("password")
+	err, tokenString := MongoDB.LoginUser(&email, password)
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.SetSameSite(http.SameSiteLaxMode)
+	ctx.SetCookie("Authorization", tokenString, 3600*24, "", "", false, true)
+	ctx.JSON(http.StatusOK, gin.H{})
+}
+
+func Validate(ctx *gin.Context) {
+	user, _ := ctx.Get("user")
+	ctx.JSON(http.StatusOK, gin.H{"message": user})
+}
+
 func RegisterUserRoutes(router *gin.RouterGroup) {
 	router.POST("/createUser", CreateUser)
 	router.GET("/readUser/:email", ReadUser)
 	router.GET("/getAllUsers", GetAllUsers)
 	router.PATCH("/updateUser", UpdateUser)
 	router.DELETE("/deleteUser/:email", DeleteUser)
+	router.GET("/login/:email/:password", Login)
+	router.GET("/validate", Middleware.RequireAuth, Validate)
 }
