@@ -26,6 +26,8 @@ type User struct {
 	SearchingForSubjects []string           `json:"searchingForSubjects" bson:"searchingForSubjects"`
 	Skills               []string           `json:"skills" bson:"skills"`
 	Username             string             `json:"username" bson:"username"`
+	requests             []bookingRequest   `json:"requests" bson:"requests"`
+	appointments         []appointment      `json:"appointments" bson:"appointments"`
 }
 
 type Address struct {
@@ -36,11 +38,29 @@ type Address struct {
 }
 
 type Review struct {
-	Date       primitive.DateTime `json:"date" bson:"date"`
-	Rating     int                `json:"rating" bson:"rating"`
-	Review     string             `json:"review" bson:"review"`
-	Reviewee   string             `json:"reviewee" bson:"reviewee"`
-	RevieweeID primitive.ObjectID `json:"reviewee_id" bson:"reviewee_id"`
-	Reviewer   string             `json:"reviewer" bson:"reviewer"`
-	ReviewerID primitive.ObjectID `json:"reviewer_id" bson:"reviewer_id"`
+	Date          primitive.DateTime `json:"date" bson:"date"`
+	Rating        int                `json:"rating" bson:"rating"`
+	Review        string             `json:"review" bson:"review"`
+	Reviewee      string             `json:"reviewee" bson:"reviewee"`
+	RevieweeEmail string             `json:"reviewee_email" bson:"reviewee_email"`
+	Reviewer      string             `json:"reviewer" bson:"reviewer"`
+	ReviewerEmail string             `json:"reviewer_email" bson:"reviewer_email"`
+}
+
+type bookingRequest struct {
+	StudentEmail  string             `json:"studentEmail" bson:"studentEmail"`
+	TeacherEmail  string             `json:"teacherEmail" bson:"teacherEmail"`
+	Subject       string             `json:"subject" bson:"subject"`
+	Price         int                `json:"price" bson:"price"`
+	startDateTime primitive.DateTime `json:"startDateTime" bson:"startDateTime"`
+	endDateTime   primitive.DateTime `json:"endDateTime" bson:"endDateTime"`
+}
+
+type appointment struct {
+	StudentEmail  string             `json:"studentEmail" bson:"studentEmail"`
+	TeacherEmail  string             `json:"teacherEmail" bson:"teacherEmail"`
+	Subject       string             `json:"subject" bson:"subject"`
+	Price         int                `json:"price" bson:"price"`
+	startDateTime primitive.DateTime `json:"startDateTime" bson:"startDateTime"`
+	endDateTime   primitive.DateTime `json:"endDateTime" bson:"endDateTime"`
 }
