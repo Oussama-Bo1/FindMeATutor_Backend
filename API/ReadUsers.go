@@ -8,6 +8,8 @@ import (
 )
 
 func GetAllUsers(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "http://localhost:19006")
+	ctx.Header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
 	users, err := MongoDB.GetAllUsers()
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
@@ -17,6 +19,8 @@ func GetAllUsers(ctx *gin.Context) {
 }
 
 func CreateUser(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "http://localhost:19006")
+	ctx.Header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
 	var user MongoDB.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -31,6 +35,8 @@ func CreateUser(ctx *gin.Context) {
 }
 
 func ReadUser(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "http://localhost:19006")
+	ctx.Header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
 	email := ctx.Param("email")
 	user, err := MongoDB.ReadUser(&email)
 	if err != nil {
@@ -41,6 +47,8 @@ func ReadUser(ctx *gin.Context) {
 }
 
 func UpdateUser(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "http://localhost:19006")
+	ctx.Header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
 	var user MongoDB.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -55,6 +63,8 @@ func UpdateUser(ctx *gin.Context) {
 }
 
 func DeleteUser(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "http://localhost:19006")
+	ctx.Header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
 	email := ctx.Param("email")
 	err := MongoDB.DeleteUser(&email)
 	if err != nil {
@@ -65,6 +75,8 @@ func DeleteUser(ctx *gin.Context) {
 }
 
 func Login(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "http://localhost:19006")
+	ctx.Header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
 	email := ctx.Param("email")
 	password := ctx.Param("password")
 	err, tokenString := MongoDB.LoginUser(&email, password)
@@ -74,10 +86,12 @@ func Login(ctx *gin.Context) {
 	}
 	ctx.SetSameSite(http.SameSiteLaxMode)
 	ctx.SetCookie("Authorization", tokenString, 3600*24, "", "", false, true)
-	ctx.JSON(http.StatusOK, gin.H{"message": "User logged in"})
+	ctx.JSON(http.StatusOK, gin.H{"message": "User logged in", "token": tokenString, "email": email})
 }
 
 func Validate(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "http://localhost:19006")
+	ctx.Header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
 	user, _ := ctx.Get("user")
 	ctx.JSON(http.StatusOK, gin.H{"message": user})
 }
